@@ -1,0 +1,65 @@
+<div class="d-flex align-items-stretch">
+    <div class="col-lg-6 login-image py-5">
+    </div>
+    <div class="col-lg-6 d-flex">
+        <div class="container full-height d-flex justify-content-center align-items-center">
+            <mat-card class="signup-card">
+                <mat-card-header>
+                    <mat-card-title>{{ isedit ? 'Edit Your Profile' : 'Register' }}</mat-card-title>
+                    <button *ngIf="isedit" mat-icon-button (click)="signupForm.reset(); isedit = false" routerLink="/">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-card-header>
+
+                <mat-card-content>
+                    <form [formGroup]="signupForm" (ngSubmit)="isedit ? onupdate() : onSubmit()">                      
+
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Name</mat-label>
+                            <input matInput formControlName="name" type="text" placeholder="Name">
+                            <mat-error *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched">
+                                Name is required.
+                            </mat-error>
+                        </mat-form-field> 
+
+                        <div *ngIf="!isedit">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>Email</mat-label>
+                                <input matInput formControlName="email" type="email" placeholder="Email">
+                                <mat-error *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+                                    Email is required and must be a valid email address.
+                                </mat-error>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>Password</mat-label>
+                                <input matInput formControlName="password" type="password" placeholder="Password">
+                                <mat-error *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+                                    Password is required.
+                                </mat-error>
+                            </mat-form-field>
+                        </div> 
+                        <mat-label class="my-1">Profile picture</mat-label>
+                        <div class="file-upload-container">
+                            <label class="file-upload-label" for="file-upload">Choose an Image</label>
+                            <input type="file" id="file-upload" (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+                            <mat-error *ngIf="profilePicError">{{ profilePicError }}</mat-error>
+                            <div *ngIf="selectedFileName">
+                                {{selectedFileName}}
+                            </div>
+                        </div>
+                        
+                        <div class="signup-actions">
+                            <a *ngIf="!isedit" mat-button routerLink="/auth">Already have an account</a>
+                        </div>
+                        <div class="signup-actions">
+                            <button mat-raised-button color="primary" type="submit">
+                                {{ isedit ? 'Update' : 'Register' }}
+                            </button>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>
