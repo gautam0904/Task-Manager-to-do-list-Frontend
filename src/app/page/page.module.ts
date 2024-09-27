@@ -13,6 +13,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon'; 
 import { FormsModule } from '@angular/forms';
 import { TaskComponent } from './task/task.component';
+import { SharedModule } from '../shared/shared.module';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,9 @@ import { TaskComponent } from './task/task.component';
     MatInputModule,
     MatFormFieldModule,
     MatCardModule,
-    FormsModule
+    FormsModule,
+    SharedModule,
+    MatSelectModule
   ]
 })
 export class PageModule { }

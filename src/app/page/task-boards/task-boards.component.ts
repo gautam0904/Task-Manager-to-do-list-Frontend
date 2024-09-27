@@ -6,6 +6,7 @@ import { IBoard } from 'src/app/core/interfaces/iboard';
 import { BoardService } from 'src/app/core/services/board.service';
 import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material/dialog';
+import { SharedService } from 'src/app/core/services/shared.service';
 
 @Component({
   selector: 'app-task-boards',
@@ -23,6 +24,7 @@ export class TaskBoardsComponent implements OnInit {
     private fb: FormBuilder,
     private boardService: BoardService,
     private router : Router,
+    private sharedService : SharedService,
     private dialog: MatDialog
   ) { 
     this.boardForm = this.fb.group({
@@ -50,7 +52,6 @@ export class TaskBoardsComponent implements OnInit {
   }
 
   onAddBoard() {
-    console.log(this.boardForm);
     if (this.boardForm.valid) {
       this.loading = true;
       this.boardService.createBoard(this.boardForm.value).subscribe({
@@ -72,9 +73,8 @@ export class TaskBoardsComponent implements OnInit {
   }
 
   navigateToTasks(boardId: string="") {
-  // Navigate to the tasks page or component for the selected board
-  console.log(boardId);
-  // this.router.navigate(['/tasks', boardId]);
+  this.sharedService.setboardId(boardId); 
+  this.router.navigate(['/page/tasks']);
 }
 
   onDrop(event: CdkDragDrop<any[]>) {
@@ -85,6 +85,8 @@ export class TaskBoardsComponent implements OnInit {
     console.log(`Dragging task: ${draggedTask.name}`);
     console.log(`from ${sourceBoard} `);
     console.log(`to ${targetBoard}`);
+
+    
 
     if (event.previousContainer === event.container) {
       // Moving within the same board
@@ -101,9 +103,27 @@ export class TaskBoardsComponent implements OnInit {
     }
   }
 
-
+  deleteBoard(id : string = ""){
+    this.boardService.deleteBoard(id).subscribe({
+      next: (resdata: any) => {
+       Swal.fire({
+        icon : "success",
+        title: 'Delete!',
+        text: 'Board is deleted',
+       })
+      },
+      error: (res) => {
+        this.loading = false;
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: res.error.message,
+        })
+      }
+    })
+  }
   onDragMoved(event: any) {
-    // console.log('Dragging:', event);
+
   }
 
   updateBackend() {

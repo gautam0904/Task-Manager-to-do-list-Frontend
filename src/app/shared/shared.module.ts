@@ -12,6 +12,9 @@ import { LoadingComponent } from './loading/loading.component';
   imports: [
     CommonModule,
     SharedRoutingModule
+  ],
+  exports :[
+    LoadingComponent
   ]
 })
 export class SharedModule { }

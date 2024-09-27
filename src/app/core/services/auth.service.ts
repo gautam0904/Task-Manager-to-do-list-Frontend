@@ -98,6 +98,30 @@ export class AuthService {
       })
     );
   }
+  sendOTP(): Observable<any> {
+    return this.http.post<any>('/user/getOTP',{}).pipe(
+      catchError((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Error...",
+          text: error.error.message || 'An error occurred',
+        });
+        throw error;
+      })
+    );
+  }
+  verifyOTP(vallue : any): Observable<any> {
+    return this.http.post<any>('/user/sendOTP' , vallue).pipe(
+      catchError((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Error...",
+          text: error.error.message || 'An error occurred',
+        });
+        throw error;
+      })
+    );
+  }
 
   deleteUser(userId: string): Observable<IDeleteApiResponse>{
     return this.http.delete<IDeleteApiResponse>(`/user/delete/${userId}`).pipe(

@@ -1,16 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TaskBoardsComponent } from './task-boards/task-boards.component';
+import { TaskComponent } from './task/task.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/boards',
+    redirectTo: '/page/board',
     pathMatch: 'full'
   },
   {
-    path: 'boards',
+    path: 'board',
     component: TaskBoardsComponent
+  },
+  {
+    path: 'tasks',
+    component: TaskComponent
   }
 ];
 

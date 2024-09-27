@@ -12,11 +12,11 @@ export class SharedService {
   private profile = new BehaviorSubject<IUser | undefined>(undefined);
   profile$ = this.profile.asObservable();
   
-  private seat = new BehaviorSubject<number[] | undefined>(undefined);
-  seat$ = this.seat.asObservable();
+  private boardId = new BehaviorSubject<string | undefined>(undefined);
+  boardId$ = this.boardId.asObservable();
 
-  setseatData(value: number[]) {
-    this.seat.next(value);
+  setboardId(value: string) {
+    this.boardId.next(value);
   }
 
   setProfileData(value: IUser) {

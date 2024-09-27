@@ -10,11 +10,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SignupComponent } from './signup/signup.component';
+import { ForgotComponent } from './forgot/forgot.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    ForgotComponent
   ],
   imports: [
     CommonModule,
@@ -25,6 +28,7 @@ import { SignupComponent } from './signup/signup.component';
     MatButtonModule,
     MatIconModule,
     MatInputModule,
+    SharedModule
   ]
 })
 export class AuthenticationModule { }

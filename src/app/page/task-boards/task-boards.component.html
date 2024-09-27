@@ -1,4 +1,8 @@
-<div class="task-board-container">
+<div *ngIf="loading">
+  <app-loading></app-loading>
+</div>
+
+<div *ngIf="!loading" class="task-board-container">
   <h1 class="task-board-heading">Task Boards</h1>
   <div class="d-flex justify-content-center">
     <button mat-button class="add-board-button mat-raised-button mat-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -39,6 +43,11 @@
 
   <div class="board-list" cdkDropList (cdkDropListDropped)="onDrop($event)">
     <div class="board" *ngFor="let board of boards" [cdkDropListData]="board.tasks" cdkDropList (cdkDropListDropped)="onDrop($event)">
+      
+      <button class="btn text-danger" (click)="deleteBoard(board._id)">
+        <mat-icon>delete</mat-icon>
+      </button> 
+      
       <button class="btn" (click)="navigateToTasks(board._id)">
         <h3>{{ board.title }}</h3>
       </button>
@@ -49,4 +58,6 @@
       
     </div>
   </div>
+  
+  
 </div>

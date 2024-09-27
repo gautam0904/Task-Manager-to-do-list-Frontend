@@ -1,4 +1,7 @@
-<div class="d-flex align-items-stretch">
+<div *ngIf="loading">
+    <app-loading></app-loading>
+</div>
+<div *ngIf="!loading" class="d-flex align-items-stretch">
     <div class="col-lg-6 login-image">
 
     </div>
@@ -33,6 +36,9 @@
                         <!-- Actions -->
                         <div class="login-actions">
                             <a mat-button routerLink="/auth/signup">Create an account</a>
+                        </div>
+                        <div class="login-actions">
+                            <a mat-button routerLink="/auth/forgot">For got the password</a>
                         </div>
                         <div class="login-actions">
                             <button mat-raised-button color="primary" type="submit" [disabled]="loginform.invalid">Log in</button>

@@ -69,6 +69,19 @@ export class BoardService {
     );
   }
 
+  getById(boardId : string): Observable<IBoardGetApiResponse> {
+    return this.http.get<IBoardGetApiResponse>(`/board/get/${boardId}`).pipe(
+      catchError((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Error...",
+          text: error.error.message || 'An error occurred',
+        });
+        throw error;
+      })
+    );
+  }
+
   deleteBoard(Id: string): Observable<IDeleteApiResponse>{
     return this.http.delete<IDeleteApiResponse>(`/board/delete/${Id}`).pipe(
       tap((resdata: IDeleteApiResponse) => {
