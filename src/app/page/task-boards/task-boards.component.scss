@@ -7,11 +7,16 @@
 
   .board {
     flex: 1 1 calc(50% - 16px); 
-    border: 1px solid #ccc;
+    border: 2px solid #007bff; // Changed border color
     border-radius: 4px;
     padding: 16px;
     background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s;
+
+    &:hover {
+      border-color: #0056b3; // Change border color on hover
+    }
 
     h3 {
       margin: 0 0 10px;
@@ -23,6 +28,10 @@
       background-color: #e3e3e3;
       border-radius: 4px;
       cursor: move;
+
+      &:hover {
+        background-color: #d3d3d3; // Change background color on hover
+      }
     }
 
     .navigate-tasks-button {

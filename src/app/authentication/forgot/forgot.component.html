@@ -1,16 +1,18 @@
+<div *ngIf="loading">
+    <app-loading></app-loading>
+</div>
+<div *ngIf="!loading" class="d-flex align-items-stretch">
+    <div class="col-lg-6 login-image"></div>
+    <div class="col-lg-6 d-flex flex-column justify-content-center">
 
-<div class="col-lg-6 d-flex" *ngIf="!issendOTP">
-    <div class="login-form m-auto">
-        <mat-card class="login-card">
-            <mat-card-header>
-                <mat-card-title>Log in</mat-card-title>
-            </mat-card-header>
-
-            <mat-card-content>
-                <form [formGroup]="sendOTPform" (ngSubmit)="onsendOTPsubmit()">
-
-                  
-                    <!-- Email Field -->
+        <!-- Send OTP Section -->
+        <div class="login-form m-auto" *ngIf="!issendOTP">
+            <mat-card class="login-card">
+                <mat-card-header>
+                    <mat-card-title>Forgot the Password</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form [formGroup]="sendOTPform" (ngSubmit)="onsendOTPsubmit()">
                         <mat-form-field appearance="fill" class="w-100 m-1">
                             <mat-label>Email</mat-label>
                             <input matInput formControlName="email" type="email" placeholder="Email" required>
@@ -18,31 +20,24 @@
                                 Please provide a valid email address.
                             </mat-error>
                         </mat-form-field>
+                        <div class="login-actions">
+                            <button mat-raised-button color="primary" type="submit" [disabled]="sendOTPform.invalid">
+                                Send OTP
+                            </button>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </div>
 
-                    <div class="login-actions">
-                        <button mat-raised-button color="primary" type="submit" [disabled]="forgotform.invalid">Log in</button>
-                    </div>
-                </form>
-            </mat-card-content>
-        </mat-card>
-    </div>
-</div>
-
-<div class="d-flex align-items-stretch">
-    <div class="col-lg-6 login-image">
-
-    </div>
-    <div class="col-lg-6 d-flex" *ngIf="!validotp && issendOTP">
-        <div class="login-form m-auto">
+        <!-- Enter OTP Section -->
+        <div class="login-form m-auto" *ngIf="!validotp && issendOTP">
             <mat-card class="login-card">
                 <mat-card-header>
-                    <mat-card-title>Log in</mat-card-title>
+                    <mat-card-title>Enter OTP</mat-card-title>
                 </mat-card-header>
-
                 <mat-card-content>
                     <form [formGroup]="forgotform" (ngSubmit)="onsubmit()">
-
-                      
                         <mat-form-field appearance="fill" class="w-100 m-1">
                             <mat-label>OTP</mat-label>
                             <input matInput formControlName="otp" type="text" placeholder="OTP" required>
@@ -50,37 +45,35 @@
                                 Please provide a valid OTP.
                             </mat-error>
                         </mat-form-field>
-
                         <div class="login-actions">
-                            <button mat-raised-button color="primary" type="submit" [disabled]="forgotform.invalid">Log in</button>
+                            <button mat-raised-button color="primary" type="submit" >
+                                Verify OTP
+                            </button>
                         </div>
                     </form>
                 </mat-card-content>
             </mat-card>
         </div>
-    </div>
 
-
-    <div class="col-lg-6 d-flex" *ngIf="validotp && issendOTP">
-        <div class="login-form m-auto">
+        <!-- Update Password Section -->
+        <div class="login-form m-auto" *ngIf="validotp && issendOTP">
             <mat-card class="login-card">
                 <mat-card-header>
-                    <mat-card-title>Log in</mat-card-title>
+                    <mat-card-title>Update Password</mat-card-title>
                 </mat-card-header>
-
                 <mat-card-content>
-                    <form [formGroup]="forgotform" (ngSubmit)="onsubmit()">
-
+                    <form [formGroup]="passwordform" (ngSubmit)="onsubmit()">
                         <mat-form-field appearance="fill" class="w-100 m-1">
                             <mat-label>New Password</mat-label>
-                            <input matInput formControlName="password" type="password" placeholder="password" required>
+                            <input matInput formControlName="password" type="password" placeholder="Password" required>
                             <mat-error *ngIf="passwordform.get('password')?.invalid && passwordform.get('password')?.touched">
                                 Please provide a valid password.
                             </mat-error>
                         </mat-form-field>
-
                         <div class="login-actions">
-                            <button mat-raised-button color="primary" type="submit" [disabled]="passwordform.invalid">Log in</button>
+                            <button mat-raised-button color="primary" type="submit" [disabled]="passwordform.invalid">
+                                Change
+                            </button>
                         </div>
                     </form>
                 </mat-card-content>

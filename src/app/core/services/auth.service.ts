@@ -38,10 +38,29 @@ export class AuthService {
   update(updateData: IUser , imageFile: File) {
     const formData = new FormData();
     formData.append('name', updateData.name);
-    formData.append('email', updateData.email);
-    formData.append('password', updateData.password);;
     formData.append('profilePic', imageFile, imageFile.name);  
-      return this.http.put<IUserGetApiResponse>('/user/update', updateData).pipe(
+      return this.http.put<IUserGetApiResponse>(`/user/update/${updateData._id}`, formData).pipe(
+        tap((resdata: IUserGetApiResponse) => {
+          Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: resdata.message,
+          });
+        }),
+        catchError((error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Error...",
+            text: error.error.message || 'An error occurred',
+          });
+          throw error;
+        })
+      )
+  
+  }
+  updatepassword(updateData: IUser) {
+
+      return this.http.put<IUserGetApiResponse>(`/user/update/${updateData._id}`, updateData).pipe(
         tap((resdata: IUserGetApiResponse) => {
           Swal.fire({
             icon: "success",
@@ -98,20 +117,22 @@ export class AuthService {
       })
     );
   }
-  sendOTP(): Observable<any> {
-    return this.http.post<any>('/user/getOTP',{}).pipe(
+  sendOTP(email : any): Observable<any> {
+    console.log(email);
+    
+    if (email) {
+    return this.http.post<any>('/user/getOTP', { email }).pipe(
       catchError((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Error...",
-          text: error.error.message || 'An error occurred',
-        });
+        console.log(error);
         throw error;
       })
     );
+  } else {
+    throw new Error("Email is required");
+  }
   }
   verifyOTP(vallue : any): Observable<any> {
-    return this.http.post<any>('/user/sendOTP' , vallue).pipe(
+    return this.http.post<any>('/user/verifyOTP' , vallue).pipe(
       catchError((error) => {
         Swal.fire({
           icon: "error",

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { IUser } from 'src/app/core/interfaces/iuser';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { SharedService } from 'src/app/core/services/shared.service';
@@ -24,6 +24,7 @@ export class SignupComponent {
   constructor(private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private sharedService: SharedService,
   ) {
     this.signupForm = this.fb.group({
@@ -35,7 +36,14 @@ export class SignupComponent {
   }
 
   ngOnInit(): void {
-
+    this.route.queryParams.subscribe(params => {
+      this.isedit = params['isedit'] === 'true';
+      if (this.isedit) {
+        const storedProfile = localStorage.getItem('user');
+        this.profile = storedProfile ? JSON.parse(storedProfile) : undefined;
+        this.setInitialValues();
+      }
+    });
     this.sharedService.profile$.subscribe(p => {
       this.profile = p;
       this.setInitialValues();

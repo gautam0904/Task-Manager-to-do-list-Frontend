@@ -16,39 +16,38 @@ import { SharedService } from 'src/app/core/services/shared.service';
 export class TaskBoardsComponent implements OnInit {
 
   loading = false;
-  boards : IBoard[] = [];
-  boardForm : FormGroup;
-  isedit = false;
+  boards: IBoard[] = [];
+  boardForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private boardService: BoardService,
-    private router : Router,
-    private sharedService : SharedService,
+    private router: Router,
+    private sharedService: SharedService,
     private dialog: MatDialog
-  ) { 
+  ) {
     this.boardForm = this.fb.group({
-      // _id: [this.profile?._id],
       title: ['', Validators.required],
-      task : [[]],
-    })
+    });
   }
- 
 
   ngOnInit(): void {
+    this.fetchBoards();
+  }
+
+  fetchBoards() {
     this.boardService.getAllboards().subscribe({
-      next : (resdata : any) => {
-        console.log(resdata)
+      next: (resdata: any) => {
         this.boards = resdata.data;
       },
-      error : (err) => {
+      error: (err) => {
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: err.error.message,
-        })
+        });
       }
-    })
+    });
   }
 
   onAddBoard() {
@@ -56,79 +55,116 @@ export class TaskBoardsComponent implements OnInit {
       this.loading = true;
       this.boardService.createBoard(this.boardForm.value).subscribe({
         next: (resdata: any) => {
+          this.boards = resdata.data // Add the new board to the list
           this.loading = false;
+          this.boardForm.reset();
         },
         error: (res) => {
           this.loading = false;
         }
-      })
+      });
     } else {
       Object.values(this.boardForm.controls).forEach(control => {
         control.markAsTouched();
       });
     }
-  
-    // const newBoardName = `Board ${this.boards.length + 1}`;
-    // this.boards.push({ name: newBoardName, tasks: [] });
   }
 
-  navigateToTasks(boardId: string="") {
-  this.sharedService.setboardId(boardId); 
-  this.router.navigate(['/page/tasks']);
-}
+  navigateToTasks(boardId: string = "") {
+    this.sharedService.setboardId(boardId);
+    this.router.navigate(['/page/tasks']);
+  }
 
-  onDrop(event: CdkDragDrop<any[]>) {
-    const draggedTask = event.previousContainer.data[event.previousIndex];
-    const sourceBoard = event.previousContainer.data;
-    const targetBoard = event.container.data;
+ 
+onDrop(event: CdkDragDrop<any[]>) {
+  console.log('Previous Container:', event.previousContainer);
+  console.log('Current Container:', event.container);
 
-    console.log(`Dragging task: ${draggedTask.name}`);
-    console.log(`from ${sourceBoard} `);
-    console.log(`to ${targetBoard}`);
+  const targetBoardId = event.container.id;
+  const targetBoard = this.boards.find(board => board._id === targetBoardId);
 
-    
+  if (!targetBoard) {
+    console.error(`Invalid target board: ${targetBoardId}`);
+    return; // Exit if the target board is not valid
+  }
 
-    if (event.previousContainer === event.container) {
-      // Moving within the same board
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+  const targetElement = event.container.element.nativeElement;
+  const targetRect = targetElement.getBoundingClientRect();
+  
+  const dropPositionX = (event.event as MouseEvent).clientX || 0;
+  const dropPositionY = (event.event as MouseEvent).clientY || 0;
+
+  console.log("Drop Position - x:", dropPositionX, "y:", dropPositionY);
+  
+  const isDropOnRightHalf = dropPositionX > targetRect.left + (targetRect.width / 2);
+  const isDropOnBottomHalf = dropPositionY > targetRect.top + (targetRect.height / 2);
+
+  if (event.previousContainer === event.container) {
+    // Moving within the same board
+    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    console.log(`Task "${event.container.data[event.currentIndex].title}" moved within the same board.`);
+  } else {
+    // Moving between different boards
+    const movedTask = event.previousContainer.data[event.previousIndex];
+
+    // Determine target board based on position
+    const targetBoardIndex = this.boards.indexOf(targetBoard);
+    const targetBoardToDrop = isDropOnRightHalf && targetBoardIndex < this.boards.length - 1
+      ? this.boards[targetBoardIndex + 1]
+      : targetBoard;
+
+    if (targetBoardToDrop && targetBoardToDrop !== targetBoard) {
+      // Ensure target board's tasks array exists
+      if (!targetBoardToDrop.tasks) {
+        targetBoardToDrop.tasks = []; // Initialize if undefined
+      }
+      transferArrayItem(
+        event.previousContainer.data,
+        targetBoardToDrop.tasks,
+        event.previousIndex,
+        targetBoardToDrop.tasks.length // Always add to the end of the target board
+      );
+      console.log(`Task "${movedTask.title}" moved to "${targetBoardToDrop.title}".`);
     } else {
-      // Moving between different boards
+      // Default behavior if no valid board to drop into
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
-      this.updateBackend(); // Call to update backend after moving
+      console.log(`Task "${movedTask.title}" moved within the same board.`);
     }
-  }
 
-  deleteBoard(id : string = ""){
+    this.updateBackend(); // Call to update the backend if necessary
+  }
+}
+  
+  
+  
+
+  deleteBoard(id: string = "") {
     this.boardService.deleteBoard(id).subscribe({
       next: (resdata: any) => {
-       Swal.fire({
-        icon : "success",
-        title: 'Delete!',
-        text: 'Board is deleted',
-       })
+        Swal.fire({
+          icon: "success",
+          title: 'Deleted!',
+          text: 'Board is deleted',
+        });
+        this.fetchBoards(); // Refresh the list of boards
       },
       error: (res) => {
-        this.loading = false;
         Swal.fire({
           icon: "error",
           title: "Oops...",
           text: res.error.message,
-        })
+        });
       }
-    })
-  }
-  onDragMoved(event: any) {
-
+    });
   }
 
   updateBackend() {
-    // Here you would typically make a call to your backend API to update the task lists
     console.log('Updated task lists:', this.boards);
-    // Example: this.httpClient.post('/api/update-boards', this.boards).subscribe(...);
+    // Implement backend update logic if needed
   }
 }

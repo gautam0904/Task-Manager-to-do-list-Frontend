@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { HorizontalComponent } from './layout/horizontal/horizontal.component';
+import { LayoutModule } from './layout/layout.module';
 
 const routes: Routes = [
   {
@@ -10,6 +12,7 @@ const routes: Routes = [
   },
   {
     path : 'page',
+    component : HorizontalComponent,
     loadChildren: () => import('./page/page.module').then(m => m.PageModule),
     canActivate : [authGuard]
   },
@@ -19,7 +22,7 @@ const routes: Routes = [
   }];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes), LayoutModule],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

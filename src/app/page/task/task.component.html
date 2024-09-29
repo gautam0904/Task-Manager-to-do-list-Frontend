@@ -2,7 +2,7 @@
   <app-loading></app-loading>
 </div>
 
-<div class="task-board-container">
+<div *ngIf="!loading" class="task-board-container">
   <h1 class="task-board-heading">Tasks</h1>
   <!-- Button trigger modal -->
   <div class="d-flex justify-content-center">
@@ -51,12 +51,29 @@
     </div>
   </div>
 
-  <div class="board-list" >
-    <div class="board" *ngFor="let board of boards" [cdkDropListData]="board.tasks" cdkDropList>
-      <h3>{{ board.title }}</h3>
-      <div *ngFor="let task of board.tasks" cdkDrag class="task">
-        {{ task.title }}
-      </div>
+  <div *ngIf="!loading" class="board-list">
+    <div class="board-container">
+      <mat-card *ngFor="let board of boards" class="board" [cdkDropListData]="board.tasks" cdkDropList>
+        <mat-card-header>
+          <mat-card-title>
+            <h3>{{ board.title }}</h3>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngFor="let task of board.tasks" cdkDrag class="task">
+            <mat-card class="task-card">
+              <mat-card-header>
+                <mat-card-title>{{ task.title }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <p>{{ task.description }}</p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
+  
+  
 </div>

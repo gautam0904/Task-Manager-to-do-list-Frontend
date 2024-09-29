@@ -13,7 +13,6 @@ export class ForgotComponent {
   forgotform !: FormGroup;
   sendOTPform !: FormGroup;
   passwordform !: FormGroup;
-  selectFile !: File;
   loading: boolean = false;
   validotp = false;
   issendOTP =false;
@@ -23,7 +22,7 @@ export class ForgotComponent {
   ngOnInit(res : any): void {
     
     this.forgotform = this.fb.group({
-      otp : ['', [Validators.required,Validators.min(4)],Validators.max(4)],
+      otp : ['', [Validators.required]],
     });
     this.passwordform = this.fb.group({
       password : ['', [Validators.required,]],
@@ -34,14 +33,24 @@ export class ForgotComponent {
 
   }
   onsendOTPsubmit(){
-    if (this.forgotform.valid) {
+    if (this.sendOTPform.valid) {
       this.loading = true;
-      this.authService.sendOTP().subscribe({
+      this.authService.sendOTP(this.sendOTPform.value).subscribe({
         next : (resData : any)=>{
+         this.loading =false;
+         this.issendOTP = true;
           Swal.fire({
             icon :'success',
             title: 'OTP sent!!!',
             text: resData.message,
+          })
+        },
+        error: (res) => {
+          this.loading = false;
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: res.error.message,
           })
         }
       })
@@ -60,6 +69,7 @@ export class ForgotComponent {
       this.authService.verifyOTP(this.forgotform.value).subscribe({
         next: (resdata: any) => {
           if (resdata.data) {
+            this.loading=false;
             this.validotp = true
           }
         },
@@ -83,9 +93,10 @@ export class ForgotComponent {
 
     if (this.passwordform.valid) {
       this.loading = true;
-      this.authService.update(this.passwordform.value , this.selectFile).subscribe({
+      this.authService.updatepassword(this.passwordform.value).subscribe({
         next: (resdata: any) => {
           if (resdata.data) {
+            this.loading = false;
             Swal.fire({
               icon : "success",
               title : "Password Changed",

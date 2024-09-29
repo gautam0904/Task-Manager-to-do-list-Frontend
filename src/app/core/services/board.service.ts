@@ -15,7 +15,7 @@ export class BoardService {
   constructor(private http: HttpClient) { }
 
   update(updateData: IBoard) {  
-      return this.http.put<IBoardGetApiResponse>('/board/update', updateData).pipe(
+      return this.http.patch<IBoardGetApiResponse>(`/board/update/${updateData._id}`, updateData).pipe(
         tap((resdata: IBoardGetApiResponse) => {
           Swal.fire({
             icon: "success",
